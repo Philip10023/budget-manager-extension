@@ -10,7 +10,6 @@ function isInt(value) {
   parseInt(Number(value)) == value &&
   !isNaN(parseInt(value, 10));
 }
-console.log('hello?')
 
 chrome.contextMenus.onClicked.addListener(function (clickData) {
   if (clickData.menuItemId == "spendMoney" && clickData.selectionText) {
@@ -22,20 +21,22 @@ chrome.contextMenus.onClicked.addListener(function (clickData) {
           }
             newTotal += parseInt(clickData.selectionText);
             chrome.storage.sync.set({'total': newTotal}, function(){
-              if (newTotal >= budget.limit) {
-                var notifOptions = {
-                  type: 'basic',
-                  iconUrl: 'icon48.png',
-                  title: 'Limit reached!',
-                  priority: 1,
-                  message: "You've reached your limit!"
-                };
-                chrome.notifications.create('limitNotif', notifOptions);
-              }
-            })
-          })
-        }
+             if (newTotal >= budget.limit) {
+             var notifOptions = {
+                 type: 'basic',
+                 iconUrl: 'icon48.png',
+                 title: 'Limit reached!',
+                 priority: 1,
+                 message: "You've reached your limit!"
+             };
+               chrome.notifications.create('limitNotif', notifOptions);
+             }
+           })
+        })
       }
-  })
+   }
+})
 
-  console.log(chrome.runtime.lastError)
+chrome.storage.onChanged.addListener(function(changes, storageNAme){
+  chrome.browserAction.setBadgeText({"text": changes.total.newValue.toString()})
+})
